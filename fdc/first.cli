@@ -1,0 +1,7 @@
+/host=fhc1/server-config=server1:add(group=default)
+
+/host=fhc1/server-config=server1:start()
+
+/host=fhc2/server-config=server2:add(group=default)
+
+/host=fhc2/server-config=server2:start()

@@ -1,34 +1,60 @@
 version: '3.2'
 
 networks:
-  cluster:
+  farm:
 
 services:
-  master:
+  fdc:
     build:
-      context: ./master
+      context: ./fdc
     deploy:
       replicas: 1
       restart_policy:
         condition: on-failure
     networks:
-      - cluster
+      - farm
     ports:
-      - 8080:8080
       - 9990:9990
     restart: on-failure
 
-  slave:
+  fhc1:
     build:
-      context: ./slave
+      context: ./fhc1
     depends_on:
-      - master
+      - fdc
     deploy:
       replicas: 1
       restart_policy:
         condition: on-failure
     networks:
-      - cluster
+      - farm
+    restart: on-failure
+
+  fhc2:
+    build:
+      context: ./fhc2
+    depends_on:
+      - fdc
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    networks:
+      - farm
+    restart: on-failure
+
+  lb:
+    build:
+      context: ./lb
+    depends_on:
+      - fhc1
+      - fhc2
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    networks:
+      - farm
     ports:
-      - 8081:8080
+      - 8080:80
     restart: on-failure
