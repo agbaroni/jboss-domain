@@ -1,0 +1,7 @@
+/host=bhc1/server-config=server1:add(group=default)
+
+/host=bhc1/server-config=server1:start()
+
+/host=bhc2/server-config=server2:add(group=default)
+
+/host=bhc2/server-config=server2:start()

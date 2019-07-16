@@ -18,15 +18,17 @@ embed-host-controller
 
 /interface=public:write-attribute(name=inet-address,value=fdc)
 
-/interface=unsecure:write-attribute(name=inet-address,value=fdc)
-
-/profile=full-ha/subsystem=datasources/data-source=ExampleDS:remove()
-
 /profile=full-ha/subsystem=jgroups/channel=frontend:add(stack=tcp)
 
 /profile=full-ha/subsystem=jgroups:write-attribute(name=default-channel,value=frontend)
 
 /profile=full-ha/subsystem=jgroups/channel=ee:remove()
+
+/socket-binding-group=full-ha-sockets/remote-destination-outbound-socket-binding=backend-socket:add(host=lb,port=8080)
+
+/profile=full-ha/subsystem=remoting/remote-outbound-connection=backend-connection:add(outbound-socket-binding-ref=backend-socket)
+/profile=full-ha/subsystem=remoting/remote-outbound-connection=backend-connection/property=SASL_POLICY_NOANONYMOUS:add(value=false)
+/profile=full-ha/subsystem=remoting/remote-outbound-connection=backend-connection/property=SSL_ENABLED:add(value=false)
 
 /server-group=default:add(profile=full-ha,socket-binding-group=full-ha-sockets)
 

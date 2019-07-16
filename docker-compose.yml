@@ -4,9 +4,52 @@ networks:
   farm:
 
 services:
+  bdc:
+    build:
+      context: ./bdc
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    networks:
+      - farm
+    ports:
+      - 9991:9990
+    restart: on-failure
+
+  bhc1:
+    build:
+      context: ./bhc1
+    depends_on:
+      - bdc
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    networks:
+      - farm
+    restart: on-failure
+
+  bhc2:
+    build:
+      context: ./bhc2
+    depends_on:
+      - bdc
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    networks:
+      - farm
+    restart: on-failure
+
   fdc:
     build:
       context: ./fdc
+    depends_on:
+      - bdc
+      - bhc1
+      - bhc2
     deploy:
       replicas: 1
       restart_policy:
@@ -49,6 +92,8 @@ services:
     depends_on:
       - fhc1
       - fhc2
+      - bhc1
+      - bhc2
     deploy:
       replicas: 1
       restart_policy:
